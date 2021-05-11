@@ -1,0 +1,27 @@
+---
+title: "First Meeting Preparation"
+author: "Jen Wang"
+date: "5/11/2021"
+output: pdf_document
+---
+# Project Goal
+
+"The goal of this project is to expand upon the primary research we undertook to convey the multifaceted information available from public sources on science policy priorities across all of NYC's 59 community board districts. Building in these key, additional layers of information as an interactive tool will allow public users to better explore how science plays and role in, and can potentially help their communities. It will also help policymakers see how science is connected to issues across districts, as well challenges faced by the City as a whole."
+
+
+Sci4NY can share all of the data (in spreadsheet form) that we complied for our primary analysis. The data is drawn from City agency websites, which was then aggregated and evaluated based on "expert judgement" to assess a main science policy issue for each community board district. 
+
+## Policy:
+
+for policy maker: a decision to make, a course of action
+for everyone: the stuff politicians do that effects my life
+
+## Science: 
+Science informs policy => good policy
+Science has to be marketed. 
+
+## Policy Communication: 
+When people don't understand why something is being done and you are doing "that something" with their money, they tend to get a little perturb and tend to resist even though they don't know what they are resisting.
+It should be part of our goal as a scientist to understand how to get people to understand what we understand.
+
+As a counselor, a scientist helps people make better decisions, depoliticize many of the issues that are political 
