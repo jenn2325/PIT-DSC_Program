@@ -4,24 +4,55 @@ author: "Jen Wang"
 date: "5/11/2021"
 output: pdf_document
 ---
-# Project Goal
+## Project Goal
 
 "The goal of this project is to expand upon the primary research we undertook to convey the multifaceted information available from public sources on science policy priorities across all of NYC's 59 community board districts. Building in these key, additional layers of information as an interactive tool will allow public users to better explore how science plays and role in, and can potentially help their communities. It will also help policymakers see how science is connected to issues across districts, as well challenges faced by the City as a whole."
 
+## Data Readiness
 
 Sci4NY can share all of the data (in spreadsheet form) that we complied for our primary analysis. The data is drawn from City agency websites, which was then aggregated and evaluated based on "expert judgement" to assess a main science policy issue for each community board district. 
 
-## Policy:
+## About Sci4NY
 
-for policy maker: a decision to make, a course of action
-for everyone: the stuff politicians do that effects my life
+Science for New York (Sci4NY) is an initiative that aims to bridge gaps between policy and scientific communities in NYC.
 
-## Science: 
-Science informs policy => good policy
-Science has to be marketed. 
+- Project-based interaction, to the mutual benefit of both groups and the City as a whole. 
+- Provides expertise on scientific and technical matters related to policy.
+- Makes, supports or endorses any specific policy and/or policy-related recommendations. 
+- The main areas of focus are currently: Health, Climate Change & Energy, Big Data and Technology.
 
-## Policy Communication: 
-When people don't understand why something is being done and you are doing "that something" with their money, they tend to get a little perturb and tend to resist even though they don't know what they are resisting.
+
+## Self-Introduction
+- Working as an graduate mentor to shape and ready the projects for undergraduate students by defining success metrics, validating data sources, writing out detailed project briefs and giving tutorials to the undergrads. The ultimate goal for us is to help realize the potential for the public good with data science.
+
+## Science Policy Understanding
+
+### Policy:
+
+- for policy maker: a decision to make, a course of action
+- for everyone: the stuff politicians do that effects my life
+
+### Science: 
+- Science informs policy => good policy
+- Science has to be marketed. 
+
+### Policy Communication: 
+- When people don't understand why something is being done and you are doing "that something" with their money, they tend to get a little perturb and tend to resist even though they don't know what they are resisting.
 It should be part of our goal as a scientist to understand how to get people to understand what we understand.
 
-As a counselor, a scientist helps people make better decisions, depoliticize many of the issues that are political 
+- As a counselor, a scientist helps people make better decisions, depoliticize many of the issues that are political 
+
+
+
+## Vision of the Final Product
+
+- How would you like to use the results of this project?
+- What have you explored so far? Data on the primary analysis?
+- What would be your time line and deliverables?
+- **Multifaceted** information: what aspects used to facet?
+- **Interactive Tool**: What kind of interactive tool are you planing on exploiting? (Do students have the skills that are required to implement this tool? If not, would tutorials be sufficient for them to start the project?)
+
+
+## Milestones
+
+- TBD
