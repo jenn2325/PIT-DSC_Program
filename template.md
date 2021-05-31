@@ -6,33 +6,25 @@ Last edited: May 11th, 2021
 
 [Motivation for the project, potential value and problem statement]
 
-Communication is no longer done solely through text. With the rise of social media,
-communication through emojis, gifs, video clips (e.g. TikTok) are on the rise where
-traditional Natural Languages Processing (NLP) methods no longer apply.
+Sci4NY wants to visualize the top science-related policy issues by each NYC community district in order to create dialogue that science knowledge can help create better policy about important community/borough issues. One of their biggest bottlenecks is extracting data from pdf reports/websites. Having to enter data manually would be very time-consuming.
 
-Deep learning methods have seen a lot of sucecss in automatically extracting features
-from images. Is it possible to generate a bag-of-words equivalent for video?
+Is it possible to generate an systematic method of parsing NYC community district reoports pdf documents or district profile websites so that it could ease the data collection process?
 
 #### Current State
 
 [Why is **now** a good time to start this project with some background research]
 
-ABC et al. have collected motion tracking data from actors based on emotional prompts.
-These methods do not scale to motion data recorded on video.
+New York City Department of Health have published NYC Community Health Profiles pdf documents for 59 community district(https://www1.nyc.gov/site/doh/data/data-publications/profiles.page), each captures the health of 59 community districts across the city. They contain over 50 measures of neighborhood health. These reports highlight the disparities among neighborhoods and can be used by policymakers, community groups, health professionals, researchers and residents to encourage community engagement and action.
 
-XYZ et al. have developed an opensource object-recognition library that can quickly
-infer different moving entities within a video. Emotion was not extracted as a possible
-feature within this body of work.
-
+New York City Department of City Planning published Community District Profiles for each of 59 community districts(https://communityprofiles.planning.nyc.gov). The profiles addresses the most pressing concerns, i.e. the top three pressing issues perceived and identified by that community district. 
 
 #### People, roles, and contacts
 
 [The people that will approve, execute, and sustain the project]
 
-- Project Owner(s) [Who is responsible if the project fails]
+- Project Owner: Nancy Holt
 - Data Scientist(s)
-- Stakeholder(s) [Who provides the resources]
-- Subject Matter Expert(s) [Who understands the domain and data]
+- Stakeholders: New York City Governments
 
 #### Requirements and metrics
 
@@ -45,6 +37,7 @@ feature within this body of work.
 - Deliverable
   - A documented library that ingests any video of people moving that can then
     correct identifying all the individuals then predict their emotional state.
+  - A systematic algorithm that automatically extract the relevent data we need from Community Health Profiles pdf documents & Community District Profiles, and merge 59 community districts data. 
 - Metrics
   - Coverage for test video files - 95% minimum
   - Precision controlling for recall being at least 50%
@@ -56,7 +49,7 @@ feature within this body of work.
 
 |--|--|--|
 |Date|Description|People|
-|4/1/2020|Kick-off & Data Delivery|John Doe, Jane Doe, and Josh Deere|
+|6/14/2020|Kick-off & Data Delivery|John Doe, Jane Doe, and Josh Deere|
 |4/7/2020|SME check-in with initial progress|John Doe, Jane Doe|
 |4/15/2020|First round of results sharing|John Doe, Jane Doe, Josh Deere, Jac Deere|
 |...|...|...|
