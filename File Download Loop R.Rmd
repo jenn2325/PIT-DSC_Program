@@ -14,8 +14,11 @@ library(stringr)
 #Identify the URL of the links
 url <- "https://www1.nyc.gov/site/doh/data/data-publications/profiles.page"
 
-#Identify the path of where to download the pdfs (Make sure to change the path for your computer)
-download.folder = "~/Desktop/Summer2021/PIT-DSC_Program/Health_Profiles/"
+#Create and identify the path of where to download the pdfs (Make sure to change the path for your computer)
+if (dir.exists("Health_Profiles") == F) {
+  dir.create("Health_Profiles")
+}
+download.folder = "Health_Profiles/"
 
 #Gets all the links in the page and puts them in a vector
 html <- paste(readLines(url,warn = F), collapse="\n")
