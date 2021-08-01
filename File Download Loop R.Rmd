@@ -1,0 +1,39 @@
+---
+title: "PIT-DSC: Health Profiles Downloads"
+
+---
+
+
+```{r}
+library(stringr)
+```
+
+
+# Downloads(Only need to run this once to download all the community health profiles)
+```{r}
+#Identify the URL of the links
+url <- "https://www1.nyc.gov/site/doh/data/data-publications/profiles.page"
+
+#Identify the path of where to download the pdfs (Make sure to change the path for your computer)
+download.folder = "~/Desktop/Summer2021/PIT-DSC_Program/Health_Profiles/"
+
+#Gets all the links in the page and puts them in a vector
+html <- paste(readLines(url,warn = F), collapse="\n")
+pdf <- unlist(str_match_all(html, "<a href=\"(.*?)\""))
+
+#Takes only the links to PDF documents and "CHP" (community health profile) documents
+pdf <- pdf[grep("chp.*.pdf$", pdf)]
+
+#Takes the links and makes them full URLs for downloading
+pdf <- paste("https://www1.nyc.gov", pdf, sep="")
+
+#loops all the downloads (I only do the first 59 because the 60th file is not a CHP)
+for(i in 1:59){
+  download.file(pdf[i], paste(download.folder, str_extract(pdf[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
+                              ".pdf", sep=""))
+}
+
+
+rm(url, i, html)
+```
+
