@@ -1,0 +1,151 @@
+---
+output: pdf_document
+urlcolor: blue
+---
+# Data Science Project: Parsing Science Policy Issues Data
+last edited: June 10th, 2021
+
+## Opportunity
+
+Sci4NY wants to visualize the top science-related policy issues by each NYC community district in order to create dialogue that science knowledge can help create better policy about important community/borough issues. One of their biggest bottlenecks is extracting data from pdf reports/websites. Having to enter data manually would be very time-consuming.
+
+Is it possible to generate an systematic method of parsing NYC community district reoports pdf documents or district profile websites so that it could ease the data collection process?
+
+## Current State
+
+New York City Department of Health and Mental Hygiene (DOHMH) have published [NYC Community Health Profiles](https://www1.nyc.gov/site/doh/data/data-publications/profiles.page) pdf documents for 59 community district, each captures the health of 59 community districts across the city. They contain over 50 measures of neighborhood health. These reports highlight the disparities among neighborhoods and can be used by policymakers, community groups, health professionals, researchers and residents to encourage community engagement and action.
+
+New York City Department of City Planning published [Community District Profiles](https://communityprofiles.planning.nyc.gov) for each of 59 community districts. The profiles addresses the most pressing concerns, i.e. the top three pressing issues perceived and identified by that community district. 
+
+Google Cloud now provides [Optical Character Recognition](https://cloud.google.com/vision/docs/ocr) (OCR) technology that could help detect and extract text from images. 
+
+
+## People, roles, and contacts
+
+- Project Owner: Nancy Holt
+- Data Scientists: Students
+- Stakeholders: Sci4NY(Science For New York)
+
+## Requirements and metrics
+
+- Deliverable
+  - likely a deliverable is a manually labeled test set (of pdfs) so in later improvements we know if something breaks. You may want to create an algorithm to detect issues, e.g. compare the time series of these metrics and if one deviates too far then flag them.
+  - A systematic algorithm that automatically extract the relevant data we need from Community Health Profiles pdf documents & Community District Profiles, and merge 59 community districts data. 
+  - A final dataset with each row represents one districts’ information, and each column represents a relevant feature. 
+  
+\begin{itemize}
+\item Metrics
+\begin{itemize}
+    \item Websites:
+    \begin{itemize}
+    \item Minimum Parsing Coverage: 90\%
+    \item Minimum Parsing Correctness: 90\%
+    \end{itemize}
+  \item Health Profiles:
+    \begin{itemize}
+    \item Minimum Parsing Coverage: all the tabular formatted data
+    \item Ideal Parsing Coverage: 100\%
+    \item Minimum Parsing Correctness: 90\% for all tabular formatted data
+    \end{itemize}
+  \item Time your algorithm and make sure the running time is within a reasonable time
+  \end{itemize}
+\item Stretch Goal
+  \begin{itemize}
+  \item An interactive Mapping to present multiple information.
+  \end{itemize}
+\end{itemize}
+
+## Timeline and milestones
+
+[Tentative]
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Date}} & \multicolumn{1}{c|}{\textbf{Description}} &
+\multicolumn{1}{c|}{\textbf{People}}
+\\ \hline
+ & & \\
+Week 1  &  Kick-off \& Data Delivery  & Students and Mentor \\                                  & &               \\ \hline
+ & Successfully parsed a single website's & \\
+Week 2 & top 3 issues; Automatically retrieve & Students and Mentor \\                              &  one data source from all PDFs  &                   \\ \hline
+ &  [First round of results sharing] & \\
+Week 3 & Successfully device an algorithm for  &  Students, Mentor and Project Owner \\                             & parsing 59 websites' top 3 issues  &                  \\ \hline
+  &  & \\
+Week 4 & TBD &      Students and Mentor \\
+  &   & \\ \hline
+   & & \\
+Week 5 & TBD   &   Students and Mentor  \\
+  & & \\ \hline
+ & [Second round of results sharing]  & \\ 
+Week 6   &  Anticipated deliverable to be shared                  & Students, Mentor and Project Owner \\                                        & with project owner &         \\ \hline
+  & & \\
+Week 7   &  TBD  &      Students and Mentor   \\
+  & & \\ \hline
+ & [Final round of results sharing] & \\
+Week 8                     & Final report and/or a final slide due  &      Students, Mentor and Project Owner          \\                             & &      \\ \hline
+ &  & \\
+TBD                     & Presentation  &      Students         \\                             & &      \\ \hline
+ 
+\end{tabular}
+\end{table}
+
+## Data Specification
+
+
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Description}} & 
+\multicolumn{1}{c|}{\textbf{Specification and attributes}} &
+\multicolumn{1}{c|}{\textbf{Purpose}} &
+\multicolumn{1}{c|}{\textbf{Source}}
+\\ \hline
+ & & & \\
+NYC community & - Top three pressing issues & Prioritize science & NYC government website \\
+district profiles data &  & policy issues &   \\ 
+(59 districts) & & &             \\ \hline
+ & - Education Data &  &   \\ 
+ & - Social \& Economic Condition Data & Rank the quantitative &             \\ 
+NYC health profiles & - Housing Data & data to identify the & \\
+(59 districts) & - Maternal and Child Health  Data & top districts for each & NYC government website \\ 
+ & - Healthy Living Data & category and top issues & \\
+ & - Health Care Data &  for each district & \\ 
+ & - Health Outcomes Data & & \\ \hline
+ & & & \\
+Environment \& Health  & - Indicators on environment \& health & Supplemental data for & NYC government website \\
+Data Portal &  \ \ topics &   mapping &   \\ 
+ & & &             \\ \hline
+\end{tabular}
+
+- Links:
+  * [NYC Community District Profiles Data](https://communityprofiles.planning.nyc.gov)
+  * [NYC Health Profiles](https://www1.nyc.gov/site/doh/data/data-publications/profiles.page)
+  * [Environment & Health Data Portal](https://a816-dohbesp.nyc.gov/IndicatorPublic/publictracking.aspx)
+
+## Data Validation
+
+- Please verify if the profile is reported uniformly across all the districts
+- How are the missing values distributed over the fields?
+
+
+|       [The profiles is formatted uniformly across all the districts.]
+
+|       [Only Children avoidable hospitalization data is missing in certain districts.]
+
+## Hand-off and maintenance
+
+The project is complete when
+
+  - The following code is documented
+  \begin{itemize}
+    \item Web scrapping algorithm for extracting top three pressing issues in NYC district profiles websites.
+    \item PDF parsing algorithm for extracting main seven category data from Health Profile pdf documents.
+    \item Advise a way to validate the quality of the data extraction(human in the loop process might be necessary).
+  \end{itemize}
+  - A data frame with each row represents one districts' data and each column represents a feature is compiled from 59 districts' Data.
+  
+
+
+
