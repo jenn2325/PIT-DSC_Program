@@ -17,6 +17,7 @@ library(plyr)
 library(tidyverse)
 library(pdftools)
 library(tm)
+library(magrittr)
 ```
 
 
@@ -27,7 +28,7 @@ A newer data was found on Community District Profiles
 
 
 ```{r}
-whoWeAre <- read.csv("chp-fulldata.csv")
+whoWeAre <- read.csv("../Data/chp-fulldata.csv")
 
 colnames(whoWeAre) <- c("ID","Boroughs","Name","Overall_pop","Race_White", "Race_Black","Race_Asian","Race_Latino","Race_Other", "Age0to17","Age18to24","Age25to44","Age45to64","Age65plus","Ltd_Eng_Prof", "X1","x2", "x3", "Born_Outside_US")
 whoWeAre <- whoWeAre %>%
@@ -58,7 +59,7 @@ rm(a,i)
 percent_esa <- data.frame()
 
 #Locate the health profiles
-all_files <- list.files(path = "Health_Profiles/")
+all_files <- list.files(path = "../Health_Profiles/")
 
 
 #This entire for loop will read all of the files based on the location on where the extract text is based on the coordinates and will produce the data in that same spot of each pdf page
@@ -66,7 +67,7 @@ for(i in seq_along(all_files)){
 
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(195, 35, 418, 87)))
+     out <- extract_text(paste("../Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(195, 35, 418, 87)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
     
@@ -96,7 +97,7 @@ for(i in seq_along(all_files)){
 
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(226, 299, 417, 361)))
+     out <- extract_text(paste("../Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(226, 299, 417, 361)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
      
@@ -129,7 +130,7 @@ for(i in seq_along(all_files)){
 
 
 
-     out <- extract_text(paste("Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(542, 128, 589, 419)))
+     out <- extract_text(paste("../Health_Profiles/",current_file,sep = ""), pages = 6, area = list(c(542, 128, 589, 419)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
    
@@ -162,7 +163,7 @@ rm(percent_esa, percent_othsg, percent_hloea)
 EconomicStress <- data.frame()
 for(i in 1:59){
   #Change Page 7 from PDF to text
-  doc <- pdf_text(paste("Health_Profiles/", all_files[i], sep=""))[[7]] %>% 
+  doc <- pdf_text(paste("../Health_Profiles/", all_files[i], sep=""))[[7]] %>% 
     #Standardizes formated and removes blank spaces
     str_replace_all("(\\n)", " ") %>% str_squish()
   #Extracts percentages and districts namer from the the page
@@ -185,7 +186,7 @@ df_nf_hospitalizations = data.frame()
 alt_area = list(c(181.6539, 36.5285, 204.9078, 307.3679 ))
 
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   
   out <- extract_text(t_fname, pages = 8, area = list(c(170, 37, 191,338)))
   
@@ -212,7 +213,7 @@ rm(alt_area, d, i, m, out, t_fname)
 ji <-  c()
 # Extract Jail Incarceration data from all districts
 for (i in 1:59) {
-    out <- extract_text(paste("Health_Profiles/", all_files[i], sep = ""), pages = 8, area = list(c(422,60.7,532,462))) %>%
+    out <- extract_text(paste("../Health_Profiles/", all_files[i], sep = ""), pages = 8, area = list(c(422,60.7,532,462))) %>%
            str_remove_all(",")
     res <- ifelse(all_files[i] == "mn8.pdf", unlist(str_match_all(out, "[0-9]{2,4}")) %>% as.numeric(), 
                     unlist(str_match_all(out, "[0-9]{2,4}")) %>% data.frame() %>% filter(. != "71") %>% unlist() %>% as.numeric())
@@ -238,7 +239,7 @@ hn = {}
 
 normal_area = list(c(610.8245, 306.6939, 631.6408, 495.4286))
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   
   out <- extract_text(t_fname, pages = 8, area = normal_area)
   m <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
@@ -259,7 +260,7 @@ rm(d, normal_area, i, m, out, t_fname)
 
 ```{r}
 # locate the health profiles pdfs(make sure to change to your own directory)
-pdf_path = list.files(path = "Health_Profiles/")
+pdf_path = list.files(path = "../Health_Profiles/")
 
 #lists the files in the path where our pdf's are stored
 AC = matrix(NA, ncol = 1, nrow = 59) 
@@ -267,7 +268,7 @@ areas =  c(276, 36, 330, 79)
 
 #iterate through pdf's and extract target data value, being conscious of misc values
 for(i in 1:59){
-  pdfText = extract_text(paste("Health_Profiles/",pdf_path[i], sep ="" ),pages = 9, area = list(areas))
+  pdfText = extract_text(paste("../Health_Profiles/",pdf_path[i], sep ="" ),pages = 9, area = list(areas))
   values = unlist(str_match_all(pdfText,"[0-9]{1,2}%"))
   if(length(values) == 2){
     AC[i,] = values[2]
@@ -291,7 +292,7 @@ rm(AC, areas,  i, pdfText, values)
 
 #### Air Pollution
 ```{r}
-Air_Pollution <- read.csv("AirPollution.csv") %>% 
+Air_Pollution <- read.csv("../Data/AirPollution.csv") %>% 
   .[,-1] %>% 
   mutate(Community.District = str_remove_all(Community.District,"\\(CD[0-9]{1,2}\\)")) %>% 
   mutate(Community.District = str_trim(Community.District))
@@ -308,7 +309,7 @@ areas =  c(554, 46, 658, 90)
 
 #iterate through pdf's and extract target data value
 for(i in 1:59){
-  pdfText = extract_text(paste("Health_Profiles/",pdf_path[i], sep = ""),pages = 9, area = list(areas))
+  pdfText = extract_text(paste("../Health_Profiles/",pdf_path[i], sep = ""),pages = 9, area = list(areas))
   values = unlist(str_match_all(pdfText,"[0-9]{1,2}%"))
   defect_Rates[i,] = values
 }
@@ -332,7 +333,7 @@ areas =  c(569, 308, 589, 426)
 
 #iterate through pdf's and extract target data value
 for(i in 1:59){
-  pdfText = extract_text(paste("Health_Profiles/",pdf_path[i],sep = ""),pages = 9, area = list(areas))
+  pdfText = extract_text(paste("../Health_Profiles/",pdf_path[i],sep = ""),pages = 9, area = list(areas))
   values = unlist(str_match_all(pdfText,"[0-9]{1,2}%"))
   roach[i,] = values
 }
@@ -365,7 +366,7 @@ WordToNum <- c(no=0, one=1, two=2, three=3, four=4, five=5, six=6, seven=7, eigh
 
 for(i in 1:59) {
   #Identifies the files in their files
-  File <- paste("Health_Profiles/", all_files[i], sep="")
+  File <- paste("../Health_Profiles/", all_files[i], sep="")
   #Creates the data frame
   df <- data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
                    #Percentages of Bike Lanes
@@ -403,7 +404,7 @@ for(i in seq_along(all_files)){
     
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file,sep = ""), pages = 11, area = list(c(213, 30, 331, 571)))
+     out <- extract_text(paste("../Health_Profiles/",current_file,sep = ""), pages = 11, area = list(c(213, 30, 331, 571)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}.[0-9]{1}\\%", .))
 
@@ -508,7 +509,7 @@ for(i in seq_along(all_files)){
      
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file, sep = ""), pages = 11, area = list(c(385, 28, 468, 445)))
+     out <- extract_text(paste("../Health_Profiles/",current_file, sep = ""), pages = 11, area = list(c(385, 28, 468, 445)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}.[0-9]{1}\\%", .))
 
@@ -609,7 +610,7 @@ for(i in seq_along(all_files)){
 
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file, sep = ""), pages = 11, area = list(c(550, 309, 596.5, 649)))
+     out <- extract_text(paste("../Health_Profiles/",current_file, sep = ""), pages = 11, area = list(c(550, 309, 596.5, 649)))
 
      percents <- out %>% regmatches(., gregexpr("[1-9]{1}[0-9]{0,1}\\.[0-9]{1}", .))
 
@@ -639,7 +640,7 @@ normal_area = list(c(140.4855, 310.5401, 196.7822, 395.8932))
 hi_lo_area = list(c(140, 308, 245, 405))
 
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   # Determine search area
   if (all_files[i] == "mn1.pdf"){
     out <- extract_text(t_fname, pages = 12, area = hi_lo_area)} else{
@@ -677,7 +678,7 @@ mn2_area = list(c(420.6390, 311.9610, 486.2104, 347.7273))
 qn11_area = list(c(375.0857, 317.3143, 475.8857, 350.2286))
 
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   
   out <- extract_text(t_fname, pages = 12, area = normal_area)
   
@@ -718,7 +719,7 @@ Healthy_Living = matrix(NA, ncol = 4, nrow = 59)
 areas = c(518, 249, 686, 290)
 
 for(i in 1:59){
-  pdfTxt = extract_text(paste("Health_Profiles/",pdf_path[i],sep = ""),pages = 13, area = list(areas))
+  pdfTxt = extract_text(paste("../Health_Profiles/",pdf_path[i],sep = ""),pages = 13, area = list(areas))
   vals = unlist(str_match_all(pdfTxt,"[0-9]{1,2}%"))
   Healthy_Living[i,] = vals 
 }
@@ -739,17 +740,16 @@ colnames(Healthy_Living) <- c("Districts",
 ## Healthcare
 
 ```{r}
-
 ValuesWithCommas <- function(file, page, area){
   Val <- extract_text(file, pages= page, area= list(area)) %>%
-    str_extract_all("[0-9]") %>% paste(unlist(.), collapse = "")
+    str_extract_all("[0-9]") %$% paste(unlist(.), collapse = "")
   return(Val)
 }
 
 Healthcare <- data.frame()
 for(i in 1:59){
   #Identifies the documents
- doc <- paste("Health_Profiles/",all_files[i], sep="")
+ doc <- paste("../Health_Profiles/",all_files[i], sep="")
  df <- data.frame(
     Districts[i],
     NoInsurance = PercentExtract(doc, 14, c(251, 75, 290, 240)),
@@ -771,7 +771,7 @@ Health_Outcomes = matrix(NA, ncol = 3, nrow = 59)
 HOareas =  c(240, 174, 396, 241)
 
 for(i in 1:59){
-  pdfText = extract_text(paste("Health_Profiles/",all_files[i],sep = ""),pages = 16, area = list(HOareas))
+  pdfText = extract_text(paste("../Health_Profiles/",all_files[i],sep = ""),pages = 16, area = list(HOareas))
   values = unlist(str_match_all(pdfText,"[0-9]{1,2}%"))
   Health_Outcomes[i,] = values
 }
@@ -795,7 +795,7 @@ FromGraph <- function(file, page, area){
 }
 HIVHep <- data.frame()
 for(i in 1:59){
-  doc <- paste("Health_Profiles/", all_files[i], sep="")
+  doc <- paste("../Health_Profiles/", all_files[i], sep="")
   df <- data.frame(
     Districts = Districts[i],
     NewHiv = FromGraph(doc, 16, c(490, 64, 660, 510)),
@@ -814,7 +814,7 @@ for(i in seq_along(all_files)){
      
      current_file <- all_files[i]
 
-out <- extract_text(paste("Health_Profiles/",current_file,sep = ""), pages = 17, area = list(c(406, 40, 482, 578)))
+out <- extract_text(paste("../Health_Profiles/",current_file,sep = ""), pages = 17, area = list(c(406, 40, 482, 578)))
 
 percents <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
 
@@ -927,7 +927,7 @@ for(i in seq_along(all_files)){
 
      current_file <- all_files[i]
 
-     out <- extract_text(paste("Health_Profiles/",current_file, sep= ""), pages = 17, area = list(c(555, 302, 584, 575)))
+     out <- extract_text(paste("../Health_Profiles/",current_file, sep= ""), pages = 17, area = list(c(555, 302, 584, 575)))
 
      percents <- out %>% regmatches(., gregexpr("[0-9]{0,1},{0,1}[0-9]{3,4}", .))
 
@@ -954,7 +954,7 @@ infant = data.frame()
 
 normal_area = list(c(139.2497, 308.7358, 167.9751, 583.6788))
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   out <- extract_text(t_fname, pages = 18, area = normal_area)
   m <- str_extract(out, "\\d+\\.*\\d*")
 
@@ -982,7 +982,7 @@ first_districts <- c( 'mn8', 'qn8', 'bx7', 'qn5', 'mn4', 'mn5', 'mn6', 'mn1', 'm
 second_districts <- c('qn7','qn10', 'qn12')
 
 for (i in 1:59){
-  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  t_fname = paste("../Health_Profiles/", all_files[i], sep="")
   
   if (str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") %in% first_districts){
     out <- extract_text(t_fname, pages = 18, area = first_area)
@@ -1021,15 +1021,15 @@ rm(Health_Outcomes, HIVHep, percent_bdr, percent_ph, infant, pd)
 #Binder
 ```{r}
 library(xlsx)
-write.xlsx(data.frame(whoWeAre), file="NYC_CHP_DATA.xlsx", sheetName="WhoWeAre")
-write.xlsx(Education, file="NYC_CHP_DATA.xlsx", sheetName="Education", append=TRUE)
-write.xlsx(EconomicStress, file="NYC_CHP_DATA.xlsx", sheetName="EconomicStress", append=TRUE)
-write.xlsx(Violence, file="NYC_CHP_DATA.xlsx", sheetName="Violence", append=TRUE)
-write.xlsx(HousingNeighbourhoodConditions, file="NYC_CHP_DATA.xlsx", sheetName="Housing", append=TRUE)
-write.xlsx(Maternal_Child, file="NYC_CHP_DATA.xlsx", sheetName="Maternal_Child", append=TRUE)
-write.xlsx(Healthy_Living, file="NYC_CHP_DATA.xlsx", sheetName="HealthyLiving", append=TRUE)
-write.xlsx(Healthcare, file="NYC_CHP_DATA.xlsx", sheetName="Healthcare", append=TRUE)
-write.xlsx(HealthOutcomes, file="NYC_CHP_DATA.xlsx", sheetName="HealthOutcomes", append=TRUE)
+write.xlsx(data.frame(whoWeAre), file="../Output/NYC_CHP_DATA.xlsx", sheetName="WhoWeAre")
+write.xlsx(Education, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Education", append=TRUE)
+write.xlsx(EconomicStress, file="../Output/NYC_CHP_DATA.xlsx", sheetName="EconomicStress", append=TRUE)
+write.xlsx(Violence, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Violence", append=TRUE)
+write.xlsx(HousingNeighbourhoodConditions, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Housing", append=TRUE)
+write.xlsx(Maternal_Child, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Maternal_Child", append=TRUE)
+write.xlsx(Healthy_Living, file="../Output/NYC_CHP_DATA.xlsx", sheetName="HealthyLiving", append=TRUE)
+write.xlsx(Healthcare, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Healthcare", append=TRUE)
+write.xlsx(HealthOutcomes, file="../Output/NYC_CHP_DATA.xlsx", sheetName="HealthOutcomes", append=TRUE)
 ```
 
 
