@@ -18,15 +18,18 @@ Manually entering data from each health profile would be time consuming, therefo
   Contains all (59) health profiles by commuity district for New York State
   
 * <b> Output </b>
-  This is our final output after running our R markdown code.
+   is our final output after running our R markdown code.
 
 * <b> Rcode </b>
-  This is our entire Rmarkdown file that was used for parsing.
+   is our entire Rmarkdown file that was used for parsing.
 
 * <b> tutorial </b>
-  This is a tutorial of our process
+   is a tutorial of our process
   
 * <b> Final_Presentation </b> 
-  Our final presentation for Sci4NY
+  is our final presentation for Sci4NY
+
+* <b> Project Proposal </b> 
+  is our initial proposal from the project owner 
   
 
