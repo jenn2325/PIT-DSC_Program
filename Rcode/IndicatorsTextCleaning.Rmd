@@ -1,0 +1,26 @@
+---
+title: "Indicators"
+output: pdf_document
+---
+
+#Libraries
+```{r}
+library(readr)
+library(dplyr)
+library(stringr)
+```
+
+#Load Files
+```{r}
+indicators <- read_csv(indicators.csv)) 
+indicators <- indicators %>% select(cd_full_title, son_issue_1, son_issue_2, son_issue_3)
+```
+
+#Text Cleaning
+```{r}
+indicators$son_issue_2 <- str_replace_all(indicators$son_issue_2, "¬í", "'")
+indicators$son_issue_3 <- str_replace_all(indicators$son_issue_3, "¬í", "'")
+```
+
+
+
