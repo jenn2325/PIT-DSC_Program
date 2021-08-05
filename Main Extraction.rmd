@@ -150,6 +150,12 @@ colnames(percent_hloea)[2:4] <- c("Less than high school", "High School Graduate
 percent_hloea #initiating the tb1_df with different column names
 rm(current_info, percents, current_file, i, out)
 ```
+Combine Education Statistics
+```{r}
+Education <- left_join(percent_esa, percent_othsg, by="District") %>% left_join(., percent_hloea, by="District") 
+rm(percent_esa, percent_othsg, percent_hloea)
+```
+
 
 ### Economic Stress (Page 7)
 ```{r}
@@ -217,6 +223,14 @@ ji
 rm(j, i, out, res)
 ```
 
+Combine Violence Statistics
+```{r}
+Violence <- left_join(df_nf_hospitalizations, ji, by = "District")
+rm(df_nf_hospitalizations, ji)
+```
+
+
+### Housing and Neighbourhood Conditions
 
 #### Helpful Neighbors
 ```{r}
@@ -230,7 +244,7 @@ for (i in 1:59){
   m <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
   m <- tail(m[[1]],1)
  
-  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Helpful_neighbours = m)
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Helpful_neighbours = m)
   hn = rbind(hn, d)
 }
 
@@ -239,7 +253,7 @@ rm(d, normal_area, i, m, out, t_fname)
 ```
 
 
-### Housing and Neighbourhood Conditions
+
 
 #### Air Conditioning
 
@@ -281,8 +295,8 @@ Air_Pollution <- read.csv("AirPollution.csv") %>%
   .[,-1] %>% 
   mutate(Community.District = str_remove_all(Community.District,"\\(CD[0-9]{1,2}\\)")) %>% 
   mutate(Community.District = str_trim(Community.District))
-Air_Pollution <- whoWeAre %>% select(District, Name) %>% left_join(., Air_Pollution, by = c("Name" = "Community.District"))
-colnames(Air_Pollution) <- c("Boroughs", "Districts","District_long_name", "Air Pollution")
+Air_Pollution <- whoWeAre %>% ungroup() %>% select(District, Name) %>% left_join(., Air_Pollution, by = c("Name" = "Community.District"))
+colnames(Air_Pollution) <- c("Districts","District_long_name", "Air Pollution")
 ```
 
 
@@ -353,7 +367,7 @@ for(i in 1:59) {
   #Identifies the files in their files
   File <- paste("Health_Profiles/", all_files[i], sep="")
   #Creates the data frame
-  df <- data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
+  df <- data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
                    #Percentages of Bike Lanes
                    Bike = PercentExtract(File, 10, c(210, 40, 240, 170)),
                    #Pedestrian Injuries per 100k injuries
@@ -370,6 +384,12 @@ for(i in 1:59) {
 rm(df, File, i, WordToNum)
 ```
 
+Combine Housing and Neighbourhood Conditions
+```{r}
+HousingNeighbourhoodConditions <- left_join(hn, acRates, by = "Districts") %>% left_join(.,Air_Pollution, by = "Districts") %>% left_join(.,Homes_wo_defects, by = "Districts") %>% left_join(., roachRates, by = "Districts") %>% left_join(., Housing, by = "Districts") %>% 
+  .[,c(1,4,2:3,5:11)]
+rm(hn, acRates, Air_Pollution, Homes_wo_defects, roachRates, Housing)
+```
 
 
 ## Maternal and Child Health
@@ -684,6 +704,12 @@ for (i in 1:59){
 asthma
 rm(normal_area, mn1_area, mn2_area, mn4_area, mn5_area, qn11_area,  d, i, m, out, t_fname)
 ```
+Combine Maternal and Child Health Statistics
+```{r}
+Maternal_Child <- left_join(percent_lnpc, percent_bf, by = "District") %>% left_join(., percent_tf, by = "District") %>% left_join(., co, by = "District") %>% left_join(., asthma, by = "District")
+rm(percent_lnpc, percent_bf, percent_tf, co, asthma)
+```
+
 
 ## Healthy Living
 
@@ -771,7 +797,7 @@ HIVHep <- data.frame()
 for(i in 1:59){
   doc <- paste("Health_Profiles/", all_files[i], sep="")
   df <- data.frame(
-    Districts[i],
+    Districts = Districts[i],
     NewHiv = FromGraph(doc, 16, c(490, 64, 660, 510)),
     NewHep = FromGraph(doc, 17, c(178, 61, 320, 510)))
     HIVHep <- rbind(HIVHep, df)
@@ -883,7 +909,7 @@ for (district in 1:59) {
 
 
 percent_bdr$location <- substr(percent_bdr$location,1,nchar(percent_bdr$location)-4) # to remove .pdf from each district
-colnames(percent_bdr) <- c("District", "binge_drinking") #changing the names of each of the columns
+colnames(percent_bdr) <- c("Districts", "binge_drinking") #changing the names of each of the columns
 percent_bdr$binge_drinking <- unlist(percent_bdr$binge_drinking) #this is to flatten the second column
 percent_bdr #Initiating the dataframe to produce the data
 rm(current_info, percents, the_val, current_dis, current_file, district, i, out)
@@ -915,7 +941,7 @@ the_val <- percent_ph$current_stats
 
 
 percent_ph$location <- substr(percent_ph$location,1,nchar(percent_ph$location)-4)#This is to remove the .pdf from each district
-colnames(percent_ph) <- c("District", "Psychiatric_Hospitilizations")#This is to change the names of each column
+colnames(percent_ph) <- c("Districts", "Psychiatric_Hospitilizations")#This is to change the names of each column
 percent_ph$Psychiatric_Hospitilizations<- unlist(percent_ph$Psychiatric_Hospitilizations)#This is to flatten the second column
 
 percent_ph #Initiating the dataframe to produce the data
@@ -932,7 +958,7 @@ for (i in 1:59){
   out <- extract_text(t_fname, pages = 18, area = normal_area)
   m <- str_extract(out, "\\d+\\.*\\d*")
 
-  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,infant_mortality = m) %>% 
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,infant_mortality = m) %>% 
     mutate(infant_mortality = as.numeric(infant_mortality))
   infant = rbind(infant, d)
 }
@@ -975,7 +1001,7 @@ for (i in 1:59){
     m <- str_extract(out, "[0-9]+\\.{1}[0-9]{1}")
   }
   
-  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,premature_deaths = m)
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,premature_deaths = m)
   pd = rbind(pd, d)
 }
 
@@ -983,11 +1009,27 @@ pd
 rm(first_area, second_area, third_area, bk13, bk18, first_districts, second_districts, d, i, m, out, t_fname)
 ```
 
+Combine Health Outcomes Statistics
+```{r}
+HealthOutcomes <- left_join(Health_Outcomes, HIVHep, by = "Districts") %>% 
+  left_join(.,percent_bdr, by = "Districts") %>% left_join(., percent_ph, by = "Districts") %>% left_join(., infant, by = "Districts") %>% left_join(., pd, by = "Districts")
+rm(Health_Outcomes, HIVHep, percent_bdr, percent_ph, infant, pd)
+```
+
 
 
 #Binder
 ```{r}
-
+library(xlsx)
+write.xlsx(data.frame(whoWeAre), file="NYC_CHP_DATA.xlsx", sheetName="WhoWeAre")
+write.xlsx(Education, file="NYC_CHP_DATA.xlsx", sheetName="Education", append=TRUE)
+write.xlsx(EconomicStress, file="NYC_CHP_DATA.xlsx", sheetName="EconomicStress", append=TRUE)
+write.xlsx(Violence, file="NYC_CHP_DATA.xlsx", sheetName="Violence", append=TRUE)
+write.xlsx(HousingNeighbourhoodConditions, file="NYC_CHP_DATA.xlsx", sheetName="Housing", append=TRUE)
+write.xlsx(Maternal_Child, file="NYC_CHP_DATA.xlsx", sheetName="Maternal_Child", append=TRUE)
+write.xlsx(Healthy_Living, file="NYC_CHP_DATA.xlsx", sheetName="HealthyLiving", append=TRUE)
+write.xlsx(Healthcare, file="NYC_CHP_DATA.xlsx", sheetName="Healthcare", append=TRUE)
+write.xlsx(HealthOutcomes, file="NYC_CHP_DATA.xlsx", sheetName="HealthOutcomes", append=TRUE)
 ```
 
 
