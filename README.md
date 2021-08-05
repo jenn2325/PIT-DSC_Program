@@ -7,3 +7,26 @@ We are a team of 5 Columbia/Lehman Data Scientist, who participated in the <b> P
 Our goal was to parse all the community health profiles (by community district) of New York city in order to aide the public interest organization: Sci4NY. Our aim was to create clean data tables that would then be utilized by Sci4NY to push for science/data grounded policies.
 
 Manually entering data from each health profile would be time consuming, therefore our team wrote an R markdown file that parsed each pdf and placed the data into an excel spreadsheet. This R markdown is meant to be reusable for future parsing needs.
+
+
+### Contents of Repository
+
+* <b> Data </b>
+  Contains available data tables as well as newer versions of the needed data
+ 
+* <b>Health_Profiles</b>
+  Contains all (59) health profiles by commuity district for New York State
+  
+* <b> Output </b>
+  This is our final output after running our R markdown code.
+
+* <b> Rcode </b>
+  This is our entire Rmarkdown file that was used for parsing.
+
+* <b> tutorial </b>
+  This is a tutorial of our process
+  
+* <b> Final_Presentation </b> 
+  Our final presentation for Sci4NY
+  
+
