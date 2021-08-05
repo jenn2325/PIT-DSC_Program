@@ -29,7 +29,10 @@ Manually entering data from each health profile would be time consuming, therefo
 * <b> Final_Presentation </b> 
   is our final presentation for Sci4NY
 
-* <b> Project Proposal </b> 
-  is our initial proposal from the project owner 
+* <b> project_proposal </b> 
+  is our initial proposal from the project owner
+ 
+* <b> pressing_issues </b>
+  are the pressing issues from each community district 
   
 
