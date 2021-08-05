@@ -12,7 +12,7 @@ library(stringr)
 
 #Load Files
 ```{r}
-indicators <- read_csv(indicators.csv)) 
+indicators <- read_csv("../Data/indicators.csv")
 indicators <- indicators %>% select(cd_full_title, son_issue_1, son_issue_2, son_issue_3)
 ```
 
@@ -22,5 +22,9 @@ indicators$son_issue_2 <- str_replace_all(indicators$son_issue_2, "¬í", "'")
 indicators$son_issue_3 <- str_replace_all(indicators$son_issue_3, "¬í", "'")
 ```
 
+# Export the dataset
+```{r}
+xlsx::write.xlsx(data.frame(indicators), file="../Output/NYC_CHP_DATA.xlsx", sheetName="Top3Issues")
+```
 
 
