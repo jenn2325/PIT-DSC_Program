@@ -1021,7 +1021,7 @@ rm(Health_Outcomes, HIVHep, percent_bdr, percent_ph, infant, pd)
 #Binder
 ```{r}
 library(xlsx)
-write.xlsx(data.frame(whoWeAre), file="../Output/NYC_CHP_DATA.xlsx", sheetName="WhoWeAre")
+write.xlsx(data.frame(whoWeAre), file="../Output/NYC_CHP_DATA.xlsx", sheetName="WhoWeAre",append=TRUE)
 write.xlsx(Education, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Education", append=TRUE)
 write.xlsx(EconomicStress, file="../Output/NYC_CHP_DATA.xlsx", sheetName="EconomicStress", append=TRUE)
 write.xlsx(Violence, file="../Output/NYC_CHP_DATA.xlsx", sheetName="Violence", append=TRUE)
