@@ -31,8 +31,6 @@ Manually entering data from each health profile would be time consuming, therefo
 
 * <b> project_proposal </b> 
   is our initial proposal from the project owner
- 
-* <b> pressing_issues </b>
-  are the pressing issues from each community district 
+
   
 
