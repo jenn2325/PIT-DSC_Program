@@ -8,6 +8,8 @@ The parsing of each target data value follows the same steps.
 1. Initializing path where all community health profiles are located, load libraries,initialize areas, and creating an empty matrix.
 2. Iterate through the path and extract target value.
 3. Clean data, and return a final data frame.
+
+
 ### Libraries 
 ```{r message=FALSE}
 library(tabulizer)
@@ -21,12 +23,28 @@ library(tm)
 
 ## Who We Are(demographic Data)
 
-A newer data was found on Community District Profiles [websites](https://planninglabs.carto.com/api/v2/sql?format=csv&q=SELECT%20cartodb_id,the_geom,the_geom_webmercator,acres,acs_tooltip,acs_tooltip_2,acs_tooltip_3,area_sqmi,borocd,cb_email,cb_website,cd_full_title,cd_short_title,cd_son_fy2018,cd_tot_bldgs,cd_tot_resunits,count_hosp_clinic,count_libraries,count_parks,count_public_schools,crime_count,crime_count_boro,crime_count_nyc,crime_per_1000,crime_per_1000_boro,crime_per_1000_nyc,female_10_14,female_15_19,female_20_24,female_25_29,female_30_34,female_35_39,female_40_44,female_45_49,female_5_9,female_50_54,female_55_59,female_60_64,female_65_69,female_70_74,female_75_79,female_80_84,female_85_over,female_under_5,fp_100_area,fp_100_bldg,fp_100_cost_burden,fp_100_cost_burden_value,fp_100_mhhi,fp_100_mortg_value,fp_100_openspace,fp_100_ownerocc,fp_100_ownerocc_value,fp_100_permortg,fp_100_pop,fp_100_rent_burden,fp_100_rent_burden_value,fp_100_resunits,fp_100_openspace2,fp_500_bldg,fp_500_cost_burden,fp_500_cost_burden_value,fp_500_mhhi,fp_500_mortg_value,fp_500_openspace,fp_500_ownerocc,fp_500_ownerocc_value,fp_500_permortg,fp_500_pop,fp_500_rent_burden,fp_500_rent_burden_value,fp_500_resunits,lep_rate,lep_rate_boro,lep_rate_nyc,lot_area_commercial_office,lot_area_industrial_manufacturing,lot_area_mixed_use,lot_area_open_space,lot_area_other_no_data,lot_area_parking,lot_area_public_facility_institution,lot_area_res_1_2_family_bldg,lot_area_res_multifamily_elevator,lot_area_res_multifamily_walkup,lot_area_transportation_utility,lot_area_vacant,lots_commercial_office,lots_industrial_manufacturing,lots_mixed_use,lots_open_space,lots_other_no_data,lots_parking,lots_public_facility_institution,lots_res_1_2_family_bldg,lots_res_multifamily_elevator,lots_res_multifamily_walkup,lots_total,lots_transportation_utility,lots_vacant,male_10_14,male_15_19,male_20_24,male_25_29,male_30_34,male_35_39,male_40_44,male_45_49,male_5_9,male_50_54,male_55_59,male_60_64,male_65_69,male_70_74,male_75_79,male_80_84,male_85_over,male_under_5,mean_commute,mean_commute_boro,mean_commute_nyc,moe_bach_deg,moe_bach_deg_boro,moe_bach_deg_nyc,moe_foreign_born,moe_hh_rent_burd,moe_hh_rent_burd_boro,moe_hh_rent_burd_nyc,moe_lep_rate,moe_lep_rate_boro,moe_lep_rate_nyc,moe_mean_commute,moe_mean_commute_boro,moe_mean_commute_nyc,moe_over65_rate,moe_over65_rate_boro,moe_over65_rate_nyc,moe_poverty_rate,moe_under18_rate,moe_under18_rate_boro,moe_under18_rate_nyc,moe_unemployment_nyc,moe_unemployment_boro,moe_unemployment,neighborhoods,over65_rate,over65_rate_boro,over65_rate_nyc,pct_asian_nh,pct_bach_deg,pct_bach_deg_boro,pct_bach_deg_nyc,pct_black_nh,pct_clean_strts,pct_clean_strts_boro,pct_clean_strts_nyc,pct_foreign_born,pct_hh_rent_burd,pct_hh_rent_burd_boro,pct_hh_rent_burd_nyc,pct_hispanic,pct_other_nh,pct_served_parks,pct_white_nh,pop_2000,pop_2010,pop_acs,pop_change_00_10,poverty_rate,poverty_rate_boro,poverty_rate_nyc,puma,shared_puma,shared_puma_cd,son_issue_1,son_issue_2,son_issue_3,total_lot_area,under18_rate,under18_rate_boro,under18_rate_nyc,unemployment_boro,unemployment,unemployment_nyc,v_pluto,v_acs,v_facdb,v_crime%20FROM%20community_district_profiles&filename=Bronx-1-indicators.csv)
+A newer data was found on Community District Profiles
 
 
 ```{r}
-whoweare <- read.csv("indicators.csv")
+whoWeAre <- read.csv("chp-fulldata.csv")
 
+colnames(whoWeAre) <- c("ID","Boroughs","Name","Overall_pop","Race_White", "Race_Black","Race_Asian","Race_Latino","Race_Other", "Age0to17","Age18to24","Age25to44","Age45to64","Age65plus","Ltd_Eng_Prof", "X1","x2", "x3", "Born_Outside_US")
+whoWeAre <- whoWeAre %>%
+  select(Boroughs, Name, Overall_pop ,Race_White, Race_Black , Race_Asian,Race_Latino , Race_Other, Age0to17, Age18to24, Age25to44,Age45to64, Age65plus, Ltd_Eng_Prof, Born_Outside_US )
+whoWeAre <- whoWeAre[c(-1:-6,-66:-69),]
+whoWeAre <- whoWeAre %>% 
+  group_by(Boroughs) %>% 
+  mutate(District = row_number()) %>% 
+  mutate(District = ifelse(Boroughs == 'Manhattan', paste('mn', District, sep = ""), ifelse(Boroughs == 'Bronx', paste('bx', District, sep = ""), ifelse(Boroughs == 'Brooklyn', paste('bk', District, sep = ""), ifelse(Boroughs == 'Queens', paste('qn', District, sep = ""), paste('si', District, sep = "")))))) %>% 
+  .[,c(16,1:15)]
+
+
+i <- 4:16
+whoWeAre[,i] <- apply(whoWeAre[,i], 2, as.numeric)
+a <- c(5:16)
+whoWeAre[ ,a] <- apply(whoWeAre[,a],2, as.numeric)/100
+rm(a,i)
 ```
 
 
@@ -63,7 +81,7 @@ colnames(percent_esa) <- c("District", "Elementary_School_Absenteeism")#
 percent_esa $ Elementary_School_Absenteeism <- unlist(percent_esa$Elementary_School_Absenteeism)#This is to flatten the second column
 
 percent_esa #Initiating the dataframe to produce the data
-
+rm(current_info, percents, current_file, i, out)
 
 ```
 
@@ -95,7 +113,7 @@ colnames(percent_othsg) <- c("District", "On_time_high_school_graduation")#This 
 percent_othsg$On_time_high_school_graduation <- unlist(percent_othsg$On_time_high_school_graduation)#This is to flatten the second column
 
 percent_othsg #Initiating the dataframe to produce the data
-
+rm(current_info, percents, current_file, i, out)
 ```
 
 #### Highest Level of Education Achieved
@@ -125,13 +143,19 @@ for(i in seq_along(all_files)){
 
 percent_hloea$location <- substr(percent_hloea$location,1,nchar(percent_hloea$location)-4)#This is to remove the .pdf from each district
 colnames(percent_hloea) <- c("District", "Less_than_High_School_High_School_graduate_or_some_college_or_College_graduate")#This is to change the name of the column for the dataframe
-a <- percent_hloea%>% unnest_wider(Less_than_High_School_High_School_graduate_or_some_college_or_College_graduate) #assigning this to be able to separate and rename the columns in tb1_df
+percent_hloea <- percent_hloea%>% unnest_wider(Less_than_High_School_High_School_graduate_or_some_college_or_College_graduate) #assigning this to be able to separate and rename the columns in tb1_df
 
-colnames(a)[2:4] <- c("Less than high school", "High School Graduate or some college", "College graduate") #The renaming of each column
+colnames(percent_hloea)[2:4] <- c("Less than high school", "High School Graduate or some college", "College graduate") #The renaming of each column
            
-a #initiating the tb1_df with different column names
-
+percent_hloea #initiating the tb1_df with different column names
+rm(current_info, percents, current_file, i, out)
 ```
+Combine Education Statistics
+```{r}
+Education <- left_join(percent_esa, percent_othsg, by="District") %>% left_join(., percent_hloea, by="District") 
+rm(percent_esa, percent_othsg, percent_hloea)
+```
+
 
 ### Economic Stress (Page 7)
 ```{r}
@@ -150,15 +174,86 @@ df <- data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4
                  AvertableDeaths=str_extract(str_extract(doc, "[0-9]{1,2}% of deaths could have been averted"), "[0-9]{1,2}"))
 EconomicStress <- rbind(EconomicStress, df)
 }
+rm(df, doc, i)
 ```
 
 #### Non-Fatal Assult Hospitalizations 
 
-#### Jail Incarceration
+```{r}
+df_nf_hospitalizations = data.frame()
 
-#### Helpful Neighbors
+alt_area = list(c(181.6539, 36.5285, 204.9078, 307.3679 ))
+
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  
+  out <- extract_text(t_fname, pages = 8, area = list(c(170, 37, 191,338)))
+  
+  if (grepl("100,000", out, fixed=TRUE)){
+    out <- extract_text(t_fname, pages = 8, area = alt_area)}
+  
+  out <- gsub("\r?\n|\r", "", out)
+  
+  m <- gsub("[^0-9]", "", out)
+
+  m <- sub('.', '', m)
+  
+  
+  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,df_nf_hospitalizations =m)
+  df_nf_hospitalizations = rbind(df_nf_hospitalizations, d)
+}
+
+df_nf_hospitalizations
+rm(alt_area, d, i, m, out, t_fname)
+```
+
+#### Jail Incarceration
+```{r}
+ji <-  c()
+# Extract Jail Incarceration data from all districts
+for (i in 1:59) {
+    out <- extract_text(paste("Health_Profiles/", all_files[i], sep = ""), pages = 8, area = list(c(422,60.7,532,462))) %>%
+           str_remove_all(",")
+    res <- ifelse(all_files[i] == "mn8.pdf", unlist(str_match_all(out, "[0-9]{2,4}")) %>% as.numeric(), 
+                    unlist(str_match_all(out, "[0-9]{2,4}")) %>% data.frame() %>% filter(. != "71") %>% unlist() %>% as.numeric())
+    j = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Jail_Incarceration = res)
+  ji = rbind(ji, j)
+}
+ji
+rm(j, i, out, res)
+```
+
+Combine Violence Statistics
+```{r}
+Violence <- left_join(df_nf_hospitalizations, ji, by = "District")
+rm(df_nf_hospitalizations, ji)
+```
+
 
 ### Housing and Neighbourhood Conditions
+
+#### Helpful Neighbors
+```{r}
+hn = {}
+
+normal_area = list(c(610.8245, 306.6939, 631.6408, 495.4286))
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  
+  out <- extract_text(t_fname, pages = 8, area = normal_area)
+  m <- out %>% regmatches(., gregexpr("[0-9]{1,2}\\%", .))
+  m <- tail(m[[1]],1)
+ 
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Helpful_neighbours = m)
+  hn = rbind(hn, d)
+}
+
+hn
+rm(d, normal_area, i, m, out, t_fname)
+```
+
+
+
 
 #### Air Conditioning
 
@@ -190,11 +285,19 @@ rm(new_ac)
 Districts = substr(pdf_path,start = 0, stop = nchar(pdf_path)- 4)
 acRates = data.frame(cbind(Districts, AC))
 colnames(acRates) = c("Districts","Air_Conditioning_Rates")
-rm(AC)
+rm(AC, areas,  i, pdfText, values)
 #lists the files in the path where our pdf's are stored
 ```
 
 #### Air Pollution
+```{r}
+Air_Pollution <- read.csv("AirPollution.csv") %>% 
+  .[,-1] %>% 
+  mutate(Community.District = str_remove_all(Community.District,"\\(CD[0-9]{1,2}\\)")) %>% 
+  mutate(Community.District = str_trim(Community.District))
+Air_Pollution <- whoWeAre %>% ungroup() %>% select(District, Name) %>% left_join(., Air_Pollution, by = c("Name" = "Community.District"))
+colnames(Air_Pollution) <- c("Districts","District_long_name", "Air Pollution")
+```
 
 
 #### Home without Maintenance Defects
@@ -217,7 +320,7 @@ rm(new_df)
 
 Homes_wo_defects = data.frame(cbind(Districts, defect_Rates))
 colnames(Homes_wo_defects) = c("Districts","Rate_of_renter-occupied_homes")
-rm(defect_Rates)
+rm(defect_Rates, areas, i, pdfText, values)
 ```
 
 #### Homes Reporting Cockroaches
@@ -242,7 +345,7 @@ rm(new_roach)
 Districts = substr(pdf_path,start = 0, stop = nchar(pdf_path)- 4)
 roachRates = data.frame(cbind(Districts, roach))
 colnames(roachRates) = c("Districts","Homes_Reporting_Cockroaches")
-rm(roach)
+rm(roach,areas, i, pdfText, values)
 
 ```
 
@@ -264,7 +367,7 @@ for(i in 1:59) {
   #Identifies the files in their files
   File <- paste("Health_Profiles/", all_files[i], sep="")
   #Creates the data frame
-  df <- data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
+  df <- data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}"),
                    #Percentages of Bike Lanes
                    Bike = PercentExtract(File, 10, c(210, 40, 240, 170)),
                    #Pedestrian Injuries per 100k injuries
@@ -277,8 +380,16 @@ for(i in 1:59) {
                      str_squish() %>% str_extract("(?<=there are\\s)\\w+") %>% revalue(WordToNum, warn_missing = FALSE))
   Housing <- rbind(Housing, df)
 }
+
+rm(df, File, i, WordToNum)
 ```
 
+Combine Housing and Neighbourhood Conditions
+```{r}
+HousingNeighbourhoodConditions <- left_join(hn, acRates, by = "Districts") %>% left_join(.,Air_Pollution, by = "Districts") %>% left_join(.,Homes_wo_defects, by = "Districts") %>% left_join(., roachRates, by = "Districts") %>% left_join(., Housing, by = "Districts") %>% 
+  .[,c(1,4,2:3,5:11)]
+rm(hn, acRates, Air_Pollution, Homes_wo_defects, roachRates, Housing)
+```
 
 
 ## Maternal and Child Health
@@ -385,11 +496,11 @@ percent_lnpc$late_or_no_prenatal_care <- unlist(percent_lnpc$late_or_no_prenatal
 
 
 percent_lnpc #Initiating the dataframe to produce the data
+rm(current_info, percents, current_dis, current_file, district, i, out, thevalue)
 ```
 
 #### Preterm Births
 ```{r}
-
 percent_bf <- data.frame()
 
 #This entire for loop will read all of the files based on the location on where the extract text is based on the coordinates and will produce the data in that same spot of each pdf page
@@ -410,7 +521,6 @@ for(i in seq_along(all_files)){
 #Note: Some numbers in loops may be repeated because more numbers showed up repeated and required
 #a second loop to be removed in certain places which will be explained below 
 thedat <- percent_bf$current_stats
-
 
 #This loop is for keeping a percentage at one district and removing it from all the other districts which is the greenpoint and williamsburg district
 for (district in 1:59) {
@@ -487,6 +597,7 @@ percent_bf$pretermbirth <- unlist(percent_bf$pretermbirth) # this is to flatten 
 
 
 percent_bf #Initiating the dataframe to produce the data
+rm(current_info, percents, thedat, current_dis,district, current_file, i, out)
 ```
 
 #### Teen Births
@@ -516,21 +627,89 @@ percent_tf$teen_births<- unlist(percent_tf$teen_births)# this is to flatten the 
 
 
 percent_tf #Initiating the dataframe to produce the data
+
+rm(current_info, percents, current_file, i, out)
 ```
 
 #### Childhood Obesity
 ```{r}
+co = {}
 
-```
-#### Avoidable Hospitalization Among Children
-```{r}
+normal_area = list(c(140.4855, 310.5401, 196.7822, 395.8932))
+hi_lo_area = list(c(140, 308, 245, 405))
 
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  # Determine search area
+  if (all_files[i] == "mn1.pdf"){
+    out <- extract_text(t_fname, pages = 12, area = hi_lo_area)} else{
+      out <- extract_text(t_fname, pages = 12, area = normal_area)
+    }
+  
+  # Clean string
+  m <- sub("\\%.*", "", out)
+  m <- gsub("[^0-9]", "", out)
+  
+  # Add value to dictionary
+  temp <- as.numeric(m)
+  temp <- temp / 100
+  m = toString(temp)
+  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Childhood_Obesity = m)
+  co = rbind(co, d)
+}
+
+co
+rm(normal_area, hi_lo_area, d, i, m, out, t_fname, temp)
 ```
+
+
 
 #### Children Asthma Emergency Department Visits
 ```{r}
+asthma = data.frame()
 
+#Define search areas
+normal_area = list(c(486.0637, 379.5929, 629.7451, 421.6460))
+mn4_area = list(c(361.0286, 309.9740, 525.9506, 359.6494))
+mn1_area = list(c(376.9247, 304.0130, 498.1325, 373.5584))
+mn5_area = list(c(420.6390, 306.0000, 488.1974, 351.7013))
+mn2_area = list(c(420.6390, 311.9610, 486.2104, 347.7273))
+qn11_area = list(c(375.0857, 317.3143, 475.8857, 350.2286))
+
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  
+  out <- extract_text(t_fname, pages = 12, area = normal_area)
+  
+  # Handle edge cases
+  if (all_files[i] == "mn4.pdf"){
+     out <- extract_text(t_fname, pages = 12, area = mn4_area)
+  }else if (all_files[i] == "mn1.pdf"){
+    out <- extract_text(t_fname, pages = 12, area = mn1_area)
+  }else if (all_files[i] == "mn5.pdf"| all_files[i] =="mn6.pdf"){
+    out <- extract_text(t_fname, pages = 12, area = mn5_area)
+  }else if (all_files[i] == "mn2.pdf"){
+    out <- extract_text(t_fname, pages = 12, area = mn2_area)
+  }else if (all_files[i] == "qn11.pdf"){
+    out <- extract_text(t_fname, pages = 12, area = qn11_area)
+  }
+  
+  m <- gsub("\r?\n|\r|\n2", "", out) %>% 
+    gsub("[^0-9]", "", .) %>% 
+    gsub("10000", "", .)
+  
+  d = data.frame(District = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,Asthma = m)
+  asthma = rbind(asthma, d)
+}
+asthma
+rm(normal_area, mn1_area, mn2_area, mn4_area, mn5_area, qn11_area,  d, i, m, out, t_fname)
 ```
+Combine Maternal and Child Health Statistics
+```{r}
+Maternal_Child <- left_join(percent_lnpc, percent_bf, by = "District") %>% left_join(., percent_tf, by = "District") %>% left_join(., co, by = "District") %>% left_join(., asthma, by = "District")
+rm(percent_lnpc, percent_bf, percent_tf, co, asthma)
+```
+
 
 ## Healthy Living
 
@@ -546,9 +725,9 @@ for(i in 1:59){
 
 new_hl = gsub("%", "", Healthy_Living)
 Healthy_Living = apply(new_hl, 2, as.numeric)/100
-rm(new_hl)
+rm(new_hl, areas, i,pdfTxt,vals)
 
-Healthy_Living = data.frame(cbind(District, Healthy_Living))
+Healthy_Living = data.frame(cbind(Districts, Healthy_Living))
 colnames(Healthy_Living) <- c("Districts",    
                               "Any_physical_activity_in_the_past_30_days",
                       "At_least_one_serving_of_fruits_or_vegetables_per_day",
@@ -572,7 +751,7 @@ for(i in 1:59){
   #Identifies the documents
  doc <- paste("Health_Profiles/",all_files[i], sep="")
  df <- data.frame(
-    District[i],
+    Districts[i],
     NoInsurance = PercentExtract(doc, 14, c(251, 75, 290, 240)),
     WithoutCare = PercentExtract(doc, 14, c(270, 75, 430, 240)),
     AvoidableHosp = ValuesWithCommas(doc, 14, c(410, 309, 435, 520)),
@@ -580,7 +759,8 @@ for(i in 1:59){
     HPVVacc = PercentExtract(doc, 15, c(321, 35, 445, 75)),
     FluVacc = PercentExtract(doc, 15, c(321, 306, 445, 355)))
  Healthcare <- rbind(df, Healthcare)
-  }
+}
+rm(df, doc, i)
 ```
 
 ## Health Outcomes
@@ -598,7 +778,7 @@ for(i in 1:59){
 
 new_ho = gsub("%", "", Health_Outcomes)
 Health_Outcomes = apply(new_ho, 2, as.numeric)/100
-rm(new_ho)
+rm(new_ho, HOareas, i, pdfText, values)
 
 Health_Outcomes = data.frame(cbind(Districts, Health_Outcomes))
 colnames(Health_Outcomes) = c("Districts", "Obesity_Rates", "Diabetes_Rates", "Hypertension_Rates")
@@ -617,11 +797,12 @@ HIVHep <- data.frame()
 for(i in 1:59){
   doc <- paste("Health_Profiles/", all_files[i], sep="")
   df <- data.frame(
-    District,
+    Districts = Districts[i],
     NewHiv = FromGraph(doc, 16, c(490, 64, 660, 510)),
     NewHep = FromGraph(doc, 17, c(178, 61, 320, 510)))
-  HIVHep <- rbind(HIVHep, df)
+    HIVHep <- rbind(HIVHep, df)
 }
+rm(df, doc, i)
 ```
 
 #### Binge Drinking
@@ -647,7 +828,7 @@ the_val <- percent_bdr$current_stats
 #I will be doing this to modify the data 
 #Note: Some numbers in loops may be repeated because more numbers showed up repeated and required
 #a second loop to be removed in certain places which will be explained below 
-district <- 35
+
 #This loop is for keeping a percentage at one current stats and removing it from all the other current stats which is bensonhurst
 for (district in 1:59) {
 
@@ -728,11 +909,10 @@ for (district in 1:59) {
 
 
 percent_bdr$location <- substr(percent_bdr$location,1,nchar(percent_bdr$location)-4) # to remove .pdf from each district
-colnames(percent_bdr) <- c("District", "binge_drinking") #changing the names of each of the columns
+colnames(percent_bdr) <- c("Districts", "binge_drinking") #changing the names of each of the columns
 percent_bdr$binge_drinking <- unlist(percent_bdr$binge_drinking) #this is to flatten the second column
-
-
 percent_bdr #Initiating the dataframe to produce the data
+rm(current_info, percents, the_val, current_dis, current_file, district, i, out)
 ```
 
 #### Psychiatric hospitalizations
@@ -761,30 +941,95 @@ the_val <- percent_ph$current_stats
 
 
 percent_ph$location <- substr(percent_ph$location,1,nchar(percent_ph$location)-4)#This is to remove the .pdf from each district
-colnames(percent_ph) <- c("District", "Psychiatric_Hospitilizations")#This is to change the names of each column
+colnames(percent_ph) <- c("Districts", "Psychiatric_Hospitilizations")#This is to change the names of each column
 percent_ph$Psychiatric_Hospitilizations<- unlist(percent_ph$Psychiatric_Hospitilizations)#This is to flatten the second column
 
 percent_ph #Initiating the dataframe to produce the data
-
+rm(current_info, percents, the_val, current_file, i, out)
 ```
 
 #### Infant mortality
 ```{r}
+infant = data.frame()
 
+normal_area = list(c(139.2497, 308.7358, 167.9751, 583.6788))
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  out <- extract_text(t_fname, pages = 18, area = normal_area)
+  m <- str_extract(out, "\\d+\\.*\\d*")
+
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,infant_mortality = m) %>% 
+    mutate(infant_mortality = as.numeric(infant_mortality))
+  infant = rbind(infant, d)
+}
+
+infant
+rm(d, normal_area,i, m, out, t_fname)
 ```
 
 #### Premature death
 ```{r}
+pd = data.frame()
+#locate_areas(t_fname, page = 18)
+# Define Search Areas
+first_area = list(c(478.14466, 32.67961, 500.42621, 337.19417))
+second_area = list(c(439.3931, 284.1517, 495.8345, 362.4414))
+third_area = list(c(500.42621, 37.13592, 515.28058, 362.44660))
+bk13 = list(c(434.7429, 278.2286, 471.7714, 364.6286))
+bk18 = list(c(439.3931, 269.5862, 497.6552, 360.6207))
+# Define District Sets
+first_districts <- c( 'mn8', 'qn8', 'bx7', 'qn5', 'mn4', 'mn5', 'mn6', 'mn1', 'mn2', 'mn3')
+second_districts <- c('qn7','qn10', 'qn12')
 
+for (i in 1:59){
+  t_fname = paste("Health_Profiles/", all_files[i], sep="")
+  
+  if (str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") %in% first_districts){
+    out <- extract_text(t_fname, pages = 18, area = first_area)
+    m <- str_extract(out, "[0-9]+\\.[0-9]{1}")
+  }else if (all_files[i] =='bk13.pdf'){
+    out <- extract_text(t_fname, pages = 18, area = bk13)
+    m <- str_extract(out, "[0-9]+\\.[0-9]{1}")
+  }else if (all_files[i] =='bk18.pdf'){
+    out <- extract_text(t_fname, pages = 18, area = bk18)
+    m <- str_extract(out, "[0-9]+\\.[0-9]{1}")
+  }else if (str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") %in% second_districts){
+    out <- extract_text(t_fname, pages = 18, area = second_area)
+    m <- str_extract(out, "[0-9]+\\.[0-9]{1}")
+  }else{
+    out <- extract_text(t_fname, pages = 18, area = third_area)
+    m <- str_extract(out, "[0-9]+\\.{1}[0-9]{1}")
+  }
+  
+  d = data.frame(Districts = str_extract(all_files[i], "(bx|qn|mn|si|bk)[0-9]{1,4}") ,premature_deaths = m)
+  pd = rbind(pd, d)
+}
+
+pd
+rm(first_area, second_area, third_area, bk13, bk18, first_districts, second_districts, d, i, m, out, t_fname)
 ```
+
+Combine Health Outcomes Statistics
+```{r}
+HealthOutcomes <- left_join(Health_Outcomes, HIVHep, by = "Districts") %>% 
+  left_join(.,percent_bdr, by = "Districts") %>% left_join(., percent_ph, by = "Districts") %>% left_join(., infant, by = "Districts") %>% left_join(., pd, by = "Districts")
+rm(Health_Outcomes, HIVHep, percent_bdr, percent_ph, infant, pd)
+```
+
+
 
 #Binder
 ```{r}
-#Binds all the frames together
-FinalFrame <- left_join(EconomicStress, Housing, by="District") %>% left_join(., Healthcare, by="District") %>% left_join(., HIVHep, by="District")
-
-#Removes the singular frames & Misc
-rm(Healthcare, HIVHep, Housing, EconomicStress, doc, i, WordToNum, pdf, File, FromGraph, PercentExtract, download.folder, df, ValuesWithCommas)
+library(xlsx)
+write.xlsx(data.frame(whoWeAre), file="NYC_CHP_DATA.xlsx", sheetName="WhoWeAre")
+write.xlsx(Education, file="NYC_CHP_DATA.xlsx", sheetName="Education", append=TRUE)
+write.xlsx(EconomicStress, file="NYC_CHP_DATA.xlsx", sheetName="EconomicStress", append=TRUE)
+write.xlsx(Violence, file="NYC_CHP_DATA.xlsx", sheetName="Violence", append=TRUE)
+write.xlsx(HousingNeighbourhoodConditions, file="NYC_CHP_DATA.xlsx", sheetName="Housing", append=TRUE)
+write.xlsx(Maternal_Child, file="NYC_CHP_DATA.xlsx", sheetName="Maternal_Child", append=TRUE)
+write.xlsx(Healthy_Living, file="NYC_CHP_DATA.xlsx", sheetName="HealthyLiving", append=TRUE)
+write.xlsx(Healthcare, file="NYC_CHP_DATA.xlsx", sheetName="Healthcare", append=TRUE)
+write.xlsx(HealthOutcomes, file="NYC_CHP_DATA.xlsx", sheetName="HealthOutcomes", append=TRUE)
 ```
 
 
