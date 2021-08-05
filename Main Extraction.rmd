@@ -30,15 +30,18 @@ A newer data was found on Community District Profiles
 whoWeAre <- read.csv("chp-fulldata.csv")
 
 colnames(whoWeAre) <- c("ID","Boroughs","Name","Overall_pop","Race_White", "Race_Black","Race_Asian","Race_Latino","Race_Other", "Age0to17","Age18to24","Age25to44","Age45to64","Age65plus","Ltd_Eng_Prof", "X1","x2", "x3", "Born_Outside_US")
-
 whoWeAre <- whoWeAre %>%
-  mutate(Districts = paste())
   select(Boroughs, Name, Overall_pop ,Race_White, Race_Black , Race_Asian,Race_Latino , Race_Other, Age0to17, Age18to24, Age25to44,Age45to64, Age65plus, Ltd_Eng_Prof, Born_Outside_US )
-  
-
 whoWeAre <- whoWeAre[c(-1:-6,-66:-69),]
-i <-  4:16
-whoWeAre[,i] <- as.numeric(whoWeAre[,4])
+whoWeAre <- whoWeAre %>% 
+  group_by(Boroughs) %>% 
+  mutate(District = row_number()) %>% 
+  mutate(District = ifelse(Boroughs == 'Manhattan', paste('mn', District, sep = ""), ifelse(Boroughs == 'Bronx', paste('bx', District, sep = ""), ifelse(Boroughs == 'Brooklyn', paste('bk', District, sep = ""), ifelse(Boroughs == 'Queens', paste('qn', District, sep = ""), paste('si', District, sep = "")))))) %>% 
+  .[,c(16,1:15)]
+
+
+i <- 4:16
+whoWeAre[,i] <- apply(whoWeAre[,i], 2, as.numeric)
 a <- c(5:16)
 whoWeAre[ ,a] <- apply(whoWeAre[,a],2, as.numeric)/100
 rm(a,i)
@@ -274,7 +277,12 @@ rm(AC, areas,  i, pdfText, values)
 
 #### Air Pollution
 ```{r}
-
+Air_Pollution <- read.csv("AirPollution.csv") %>% 
+  .[,-1] %>% 
+  mutate(Community.District = str_remove_all(Community.District,"\\(CD[0-9]{1,2}\\)")) %>% 
+  mutate(Community.District = str_trim(Community.District))
+Air_Pollution <- whoWeAre %>% select(District, Name) %>% left_join(., Air_Pollution, by = c("Name" = "Community.District"))
+colnames(Air_Pollution) <- c("Boroughs", "Districts","District_long_name", "Air Pollution")
 ```
 
 
@@ -979,12 +987,7 @@ rm(first_area, second_area, third_area, bk13, bk18, first_districts, second_dist
 
 #Binder
 ```{r}
-#Binds all the frames together
 
-FinalFrame <- left_join(EconomicStress, Housing, by="District") %>% left_join(., Healthcare, by="District") %>% left_join(., HIVHep, by="District")
-
-#Removes the singular frames & Misc
-rm(Healthcare, HIVHep, Housing, EconomicStress, doc, i, WordToNum, pdf, File, FromGraph, PercentExtract, download.folder, df, ValuesWithCommas)
 ```
 
 
