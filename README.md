@@ -21,7 +21,7 @@ Manually entering data from each health profile would be time consuming, therefo
    is our entire Rmarkdown file that was used for parsing.
 
 * <b> tutorial </b>
-   is a tutorial of our process
+   is a tutorial for all kinds of general pdf data extrations and web scraping.
   
 * <b> Final_Presentation </b> 
   is our final presentation for Sci4NY
