@@ -13,9 +13,6 @@ Manually entering data from each health profile would be time consuming, therefo
 
 * <b> Data </b>
   Contains available data tables as well as newer versions of the needed data
- 
-* <b>Health_Profiles</b>
-  Contains all (59) health profiles by commuity district for New York State
   
 * <b> Output </b>
    is our final output after running our R markdown code.
